@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Station {
+  id            String   @id @default(uuid())
+  name          String   @unique
+  hindiName     String?
+  code          String?
+  latitude      Float
+  longitude     Float
+  mode          String   // "METRO", "BUS_TERMINAL", "INTERCHANGE"
+  metroLineId   String?
+  metroLine     MetroLine? @relation(fields: [metroLineId], references: [id])
+  isInterchange Boolean  @default(false)
+  zone          String?
+  wheelchair    Boolean  @default(true)
+  createdAt     DateTime @default(now())
+}
+
+model BusStop {
+  id           String   @id @default(uuid())
+  name         String   @unique
+  latitude     Float
+  longitude    Float
+  locality     String?
+  routesServed String   // JSON string array of route names
+  createdAt    DateTime @default(now())
+}
+
+model MetroLine {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  code      String    @unique
+  color     String
+  stations  Station[]
+  createdAt DateTime  @default(now())
+}
+
+model Route {
+  id               String      @id @default(uuid())
+  name             String      @unique // e.g. "717AUP", "YELLOW-LINE"
+  routeType        String      // "BUS" or "METRO"
+  agency           String      // "DTC", "DMRC", "DIMTS"
+  isAc             Boolean     @default(false)
+  startStopName    String
+  endStopName      String
+  totalStops       Int
+  avgTravelTimeMin Int
+  stops            RouteStop[]
+  observations     CrowdObservation[]
+  createdAt        DateTime    @default(now())
+}
+
+model RouteStop {
+  id                  String   @id @default(uuid())
+  routeId             String
+  route               Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  stopName            String
+  stopSequence        Int
+  latitude            Float?
+  longitude           Float?
+  distanceFromStartKm Float    @default(0.0)
+  travelTimeMin       Int      @default(0)
+}
+
+model HistoricalFootfall {
+  id          String   @id @default(uuid())
+  stationName String
+  hour        Int      // 0-23
+  isWeekend   Boolean  @default(false)
+  boardings   Float
+  alightings  Float
+  peakStatus  String   // "OFF_PEAK", "PEAK", "SUPER_PEAK"
+}
+
+model CrowdObservation {
+  id            String   @id @default(uuid())
+  routeId       String
+  route         Route    @relation(fields: [routeId], references: [id], onDelete: Cascade)
+  hour          Int      // 0-23
+  isWeekend     Boolean  @default(false)
+  isAc          Boolean  @default(false)
+  avgLoad       Float
+  crowdRatio    Float    // 0.0 to 1.0
+  crowdCategory String   // "Seats Available", "Standing Room", "Crowded"
+  crowdLevel    String   // "LOW", "MODERATE", "HIGH"
+  source        String   // "OBSERVED", "PREDICTED", "DEMO"
+}
+
+model CrowdPrediction {
+  id                  String   @id @default(uuid())
+  queryOrigin         String
+  queryDest           String
+  departureHour       Int
+  predictedCrowdLevel String
+  confidence          Float
+  modelUsed           String
+  createdAt           DateTime @default(now())
+}
+
+model SearchHistory {
+  id               String   @id @default(uuid())
+  origin           String
+  destination      String
+  departureTime    String
+  recommendedRoute String
+  createdAt        DateTime @default(now())
+}

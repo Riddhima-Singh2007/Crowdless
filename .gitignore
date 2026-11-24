@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+*/node_modules/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Production builds
+dist/
+build/
+.cache/
+
+# Databases
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Large Raw Datasets (preserve generated summaries & seed files)
+datasets/*.zip
+datasets/*.csv
+datasets/October-Delhi.csv
+datasets/__MACOSX/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

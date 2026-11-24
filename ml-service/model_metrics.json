@@ -1,0 +1,12 @@
+{
+  "model_name": "RandomForestRegressor",
+  "trained_at": "2026-11-23T12:18:24.543105",
+  "n_estimators": 100,
+  "max_depth": 12,
+  "training_samples": 52648,
+  "test_samples": 13163,
+  "mae": 0.0168,
+  "rmse": 0.0307,
+  "status": "TRAINED",
+  "data_source": "Delhi Transport Stack (October 2026 ETM/e-Ticketing)"
+}
